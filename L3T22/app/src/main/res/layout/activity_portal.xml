@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="@string/titleText" />
+
+    <EditText
+        android:id="@+id/sSiteName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="@string/url" />
+
+    <EditText
+        android:id="@+id/sUrlLink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textUri|textPostalAddress"
+        tools:text="@string/http" />
+
+    <Button
+        android:id="@+id/button_AddPortal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/addportal" />
+</LinearLayout>
