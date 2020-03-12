@@ -6,8 +6,12 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        initViews()
 
         fab.setOnClickListener {
             startActivity(
@@ -23,6 +28,22 @@ class MainActivity : AppCompatActivity() {
                     AddPortalActivity::class.java
                 )
             )
+        }
+    }
+
+    private val portalContent = arrayListOf<Portals>()
+    private val portalAdapter = PortalAdapter(portalContent)
+
+    private fun initViews() {
+        // Initialize the recycler view with a linear layout manager, adapter
+        rvPortals.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.VERTICAL, false)
+        rvPortals.adapter = portalAdapter
+        rvPortals.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
+
+
+        // Populate the places list and notify the data set has changed.
+        for (i in Portals.questionText.indices) {
+            portalContent.add(Portals(Portals.questionText[i], Portals.QuestionTruth[i]))
         }
     }
 
@@ -40,7 +61,6 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-
 
 
     }
