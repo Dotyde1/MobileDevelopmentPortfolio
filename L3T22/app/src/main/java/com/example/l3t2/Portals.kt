@@ -1,15 +1,19 @@
 package com.example.l3t2
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Portals(
-    var portalName: String,
-    var PortalURL: String
-) {
+    public var portalName: String,
+    public var PortalURL: String
+): Parcelable
+{
     companion object {
-        val questionText = arrayOf(
+        val UrlName = arrayOf(
             "Mijn HVA"
         )
-        val QuestionTruth = arrayOf(
+        val UrlLink = arrayOf(
             "https://fdmci.mijnhva.nl"
 
         )
