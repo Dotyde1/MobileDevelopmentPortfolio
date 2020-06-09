@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">SOS_App</string>
+    <string name="Main_Text">Safety app</string>
+    <string name="SOS_text">Send an SOS</string>
+    <string name="Map">Map</string>
+    <string name="SOS">SOS</string>
+    <string name="SendEmergencySOS">Send a Emergency SOS</string>
+    <string name="SendDetailedSOS">Send a detailed SOS</string>
+    <string name="DisableSOS">SOS_App</string>
+    <string name="DangerQuestion1">What is the danger?</string>
+    <string name="DangerQuestion2">Where is the danger?</string>
+    <string name="DangerQuestion3">Can you get yourself to safety?</string>
+    <string name="DangerSubmit">Send SOS</string>
+
 </resources>
