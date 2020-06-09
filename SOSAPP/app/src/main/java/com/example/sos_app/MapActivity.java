@@ -3,18 +3,20 @@ package com.example.sos_app;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -29,9 +31,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
-import com.google.android.gms.maps.OnMapReadyCallback;
-
 public class MapActivity extends FragmentActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -44,31 +43,100 @@ public class MapActivity extends FragmentActivity implements
     private Location lastLocation;
     private Marker currentUserLocationMarker;
     private static final int Request_User_Location_Code = 99;
-    private double latitide, longitude;
+    private double latitude, longitude;
     private int ProximityRadius = 10000;
+    private ImageButton police_nearby;
+    private ImageButton hospitals_nearby;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            checkUserLocationPermission();
+        }
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById((R.id.map));
         mapFragment.getMapAsync(this);
+        police_nearby = (ImageButton) findViewById(R.id.police_nearby) ;
+        hospitals_nearby = (ImageButton) findViewById(R.id.hospitals_nearby) ;
 
-
-
+        police_nearby.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onLocationClick(v);
+            }
+        });
+        hospitals_nearby.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onLocationClick(v);
+            }
+        });
     }
 
 
+    public void onLocationClick(View v)
+    {
+        String hospital = "hospital", police = "police";
+        Object transferData[] = new Object[2];
+        GetNearbyPlaces getNearbyPlaces = new GetNearbyPlaces();
+        switch (v.getId())
+        {
+            case R.id.hospitals_nearby:
+                mMap.clear();
+                String url = getUrl(latitude, longitude, hospital);
+                transferData[0] = mMap;
+                transferData[1] = url;
 
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Hospitals...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Hospitals...", Toast.LENGTH_SHORT).show();
+                break;
+
+
+            case R.id.police_nearby:
+                mMap.clear();
+                url = getUrl(latitude, longitude, police);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby police stations...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby police stations...", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    private String getUrl(double latitude, double longitude, String nearbyPlace)
+    {
+        StringBuilder googleURL = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googleURL.append("location=" + latitude + "," + longitude);
+        googleURL.append("&radius=" + ProximityRadius);
+        googleURL.append("&type=" + nearbyPlace);
+        googleURL.append("&sensor=true");
+        googleURL.append("&key=" + "AIzaSyAE7aQPuS1l9BFExWagx15sptep3RrzjyM");
+
+        Log.d("GoogleMapsActivity", "url = " + googleURL.toString());
+
+        return googleURL.toString();
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
             buildGoogleApiClient();
 
             mMap.setMyLocationEnabled(true);
         }
+
     }
     public boolean checkUserLocationPermission()
     {
@@ -123,12 +191,17 @@ public class MapActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-    locationRequest = new LocationRequest();
-    locationRequest.setInterval(1100);
-    locationRequest.setFastestInterval(1100);
-    locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+    public void onConnected(@Nullable Bundle bundle)
+    {
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1100);
+        locationRequest.setFastestInterval(1100);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        }
 
 
     }
@@ -143,10 +216,12 @@ public class MapActivity extends FragmentActivity implements
 
     }
 
+
     @Override
     public void onLocationChanged(Location location)
     {
-        latitide = location.getLatitude();
+
+        latitude = location.getLatitude();
         longitude = location.getLongitude();
 
         lastLocation = location;
