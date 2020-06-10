@@ -14,8 +14,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+
         btn_map.setOnClickListener { onMapClick() }
         btn_SOS.setOnClickListener { onSOSClick() }
+        btn_Tips.setOnClickListener { onTipsClick() }
+    }
+
+    private fun onTipsClick() {
+        startActivity( Intent(this@MainActivity, TipsActivity::class.java))
     }
 
     private fun onSOSClick() {
