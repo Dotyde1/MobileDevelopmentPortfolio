@@ -105,6 +105,7 @@ public class SosActivity extends AppCompatActivity {
     }
 
 
+
     public void DisableSOS() {
 
         btn_FastSOS.setVisibility(View.VISIBLE);
