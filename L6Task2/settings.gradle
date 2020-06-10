@@ -1,0 +1,2 @@
+rootProject.name='L6Task2'
+include ':app'
